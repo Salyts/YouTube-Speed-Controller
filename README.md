@@ -1,4 +1,4 @@
-# YouTube Speed Controller PRO
+# YouTube Speed Controller
 
 A powerful, lightweight, and fully customizable userscript for YouTube that gives you precise control over playback speed. Control speed with a dedicated UI, mouse wheel, or presets, all while keeping the native YouTube interface clean and functional.
 
