@@ -27,6 +27,10 @@ Choose one based on your browser:
 3. Press `Ctrl + S` (or File > Save) to save the script.
 4. Open any [YouTube](https://www.youtube.com) video and enjoy!
 
+Option 2: Manual installation
+Click this link to install directly: [YouTube Speed Controller-1.2.js](moz-extension://e6de236d-c868-43a2-af38-5a4f95a0cb59/ask.html?aid=b9004491-011a-4baa-ac3f-0baee277f42b)
+Your user script manager will ask you to install the script
+
 ## 🛠 Configuration
 
 You can easily modify the script behavior by editing the `CONFIG` block at the top of the code:
