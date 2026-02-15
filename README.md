@@ -32,9 +32,28 @@ Choose one based on your browser:
 You can easily modify the script behavior by editing the `CONFIG` block at the top of the code:
 
 ```javascript
-const CONFIG = {
-    maxSpeed: 5.0,        // Set your limit (e.g., 10.0)
-    scrollStep: 0.25,     // Speed change per scroll tick
-    mainColor: '#ff0000', // Change UI accent color
-    presetButtons: [0.5, 1, 1.5, 2, 3, 5] // Customize quick buttons
-};
+// ================= [ CONFIGURATION / SETTINGS ] =================
+    const CONFIG = {
+        maxSpeed: 4.0, // Maximum speed on the slider (4.0)
+        minSpeed: 0.25, // Minimum speed (0.25)
+        scrollStep: 0.25, // Step when using mouse wheel (shift + scroll mouse) (0.25)
+        sliderStep: 0.25, // Step for the UI slider (0.25)
+
+        // Quick preset buttons
+        presetButtons: [0.5, 1, 1.5, 2, 3, 4], // [0.5, 1, 1.5, 2, 3, 4]
+
+        // Visuals
+        mainColor: '#ff0000', // YouTube Red (#ff0000)
+        menuBg: 'rgba(15, 15, 15, 0.95)', // (rgba(15, 15, 15, 0.95))
+        blurAmount: '12px', // (12px)
+        borderRadius: '12px',// (12px)
+        indicatorTime: 800, // How long the speed indicator stays (ms) (800)
+
+        // Labels (English)
+        labelTitle: 'Playback speed',
+        labelClose: 'Close',
+
+        // Behavior
+        hideNativeSpeed: true
+    };
+    // ===========================================================
