@@ -20,7 +20,7 @@ To use this script, you need a userscript manager installed in your browser.
 ### Step 1: Install a Userscript Manager
 Choose one based on your browser:
 - **Chrome / Edge / Opera**: [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-- **Firefox**: [Greasemonkey](https://addons.mozilla.org/nl/firefox/addon/greasemonkey/) or [Tampermonkey](https://addons.mozilla.org/firefox/addon/tampermonkey/)
+- **Firefox**: [Tampermonkey](https://addons.mozilla.org/firefox/addon/tampermonkey/)`(Recommended)` or [Greasemonkey](https://addons.mozilla.org/nl/firefox/addon/greasemonkey/)
 
 ### Step 2: Install the Script
 1. Click on your Userscript Manager icon in the browser toolbar and select **"Create a new script"**.
