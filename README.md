@@ -10,6 +10,8 @@ A powerful, lightweight, and fully customizable userscript for YouTube that give
 - **Mouse Wheel Control**: Change speed by scrolling over the player while holding `Shift` (page scrolling is disabled during this action).
 - **Pro Config**: Easily change maximum speed, colors, and shortcuts in the script code.
 - **Clean Design**: Matches YouTube's modern aesthetic with blur effects and "YouTube Red" accents.
+- <img width="263" height="266" alt="изображение" src="https://github.com/user-attachments/assets/cd8af931-5b5e-4841-a8d5-48d44fc8acb3" />
+
 
 ## 🚀 Installation
 
