@@ -21,11 +21,10 @@ To use this script, you need a userscript manager installed in your browser.
 Choose one based on your browser:
 - **Chrome / Edge / Opera**: [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
 - **Firefox**: [Greasemonkey](https://addons.mozilla.org/nl/firefox/addon/greasemonkey/) or [Tampermonkey](https://addons.mozilla.org/firefox/addon/tampermonkey/)
-- **Safari**: [Userscripts](https://apps.apple.com/us/app/userscripts/id1463298887)
 
 ### Step 2: Install the Script
 1. Click on your Userscript Manager icon in the browser toolbar and select **"Create a new script"**.
-2. Delete any template code and paste the entire content of `script.js` from this repository.
+2. Delete any template code and paste the entire content of `YouTube Speed Controller-1.2.js` from this repository.
 3. Press `Ctrl + S` (or File > Save) to save the script.
 4. Open any [YouTube](https://www.youtube.com) video and enjoy!
 
