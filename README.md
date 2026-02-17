@@ -6,11 +6,10 @@ A powerful, lightweight, and fully customizable userscript for YouTube that give
 <img width="1135" height="358" alt="изображение" src="https://github.com/user-attachments/assets/86b6d915-05d5-4bb0-8d33-005bc470928d" />
 
 - **Custom UI Button**: Shows the current speed directly in the YouTube player bar.
-- **Speed Presets**: Quick-access buttons for your favorite speeds (e.g., 0.5x, 2x, 5x).
-- **Precise Slider**: Fine-tune your speed from 0.25x up to 5.0x.
-- **Mouse Wheel Control**: Change speed by scrolling over the player while holding `Shift` (page scrolling is disabled during this action).
+- **Quick buttons**: Quick-access buttons for your favorite speeds.
+- **Mouse Wheel Control**: Change speed by scrolling over the mouse while holding `Shift`.
 - **Config**: Easily change maximum speed, colors, and shortcuts in the script code.
-- 
+
 ## 🚀 Installation
 
 To use this script, you need a userscript manager installed in your browser.
