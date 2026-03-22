@@ -3,12 +3,13 @@
 // @name:ru      Контроллер скорости YouTube
 // @namespace    https://github.com/Salyts/YouTube-Speed-Controller.git
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
-// @version      1.4
+// @version      1.5
 // @description  Fully customizable speed controller.
 // @description:ru Полностью настраиваемый регулятор скорости.
 // @author       Salyts (Mod)
 // @match        *://www.youtube.com/*
 // @grant        none
+// @resource     materialIcons https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=fast_forward
 // ==/UserScript==
 
 (function() {
@@ -16,61 +17,60 @@
 
 const CONFIG = {
     // General
-    maxSpeed: 4.0, // Maximum speed on the slider
-    minSpeed: 0.10, // Minimum speed
-    scrollStep: 0.10, // Step when using mouse wheel (Shift + mouse scroll)
-    sliderStep: 0.10, // Step for the UI slider
-    plusMinusStep: 0.10, // Step for the - and + buttons near the slider
-    presetButtons: [0.5, 1, 1.5, 2, 3, 4], // Quick preset buttons
-    showTrailingZeros: false, // false = 2.2x, true = 2.20x (Whether to show trailing zeros)
+    maxSpeed: 4.0,
+    minSpeed: 0.10,
+    scrollStep: 0.10,
+    sliderStep: 0.10,
+    plusMinusStep: 0.10,
+    presetButtons: [0.5, 1, 1.5, 2, 3, 4],
+    showTrailingZeros: false,
 
     // Hold
-    // (When holding down the spacebar or mouse button)
-    holdSpeed: 2, // Speed while held
-    indicatorSeconds: 2, // Speed indicator duration in seconds for normal changes
-    holdIndicatorSeconds: 4, // Speed indicator duration in seconds for hold mode (-1 = until released)
-    hideCursorOnHold: true, // Hide cursor while holding (true/false)
+    holdSpeed: 2,
+    indicatorSeconds: 2,
+    holdIndicatorSeconds: 4,
+    hideCursorOnHold: true,
 
-    // Visuals (Fully customizable design)
-    mainColor: '#ff0000', // Primary color (active button, slider)
-    menuBg: 'rgba(0, 0, 0, 0.65)', // Menu background
-    blurAmount: '0px', // Background blur (backdrop-filter)
-    borderRadius: '15px', // Menu corner radius
-    menuWidth: '240px', // Menu width
-    menuSpeed: '0.25s', // Menu animation speed
-    menuTransitionType: 'cubic-bezier(0.4, 0, 0.2, 1)', // Menu animation timing function
-    labelTitle: 'Playback speed', // Title label
+    // Visuals
+    mainColor: '#ff0000',
+    menuBg: 'rgba(0, 0, 0, 0.65)',
+    blurAmount: '0px',
+    borderRadius: '15px',
+    menuWidth: '240px',
+    menuSpeed: '0.25s',
+    menuTransitionType: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    labelTitle: 'Playback speed',
 
     // Text
-    textColor: '#ffffff', // Main text color
-    mutedTextColor: '#ffffff', // Secondary text color (title)
-    fontSizeSmall: '12px', // Font size for buttons
-    fontSizeMedium: '13px', // Font size for title
-    fontSizeLarge: '14px', // Font size for current speed
+    textColor: '#ffffff',
+    mutedTextColor: '#ffffff',
+    fontSizeSmall: '12px',
+    fontSizeMedium: '13px',
+    fontSizeLarge: '14px',
 
     // Slider
-    sliderTrackColor: 'rgba(255, 255, 255, 0.2)', // Inactive slider track color
-    sliderHeight: '4px', // Slider thickness
-    sliderThumbSize: '15px', // Slider thumb size
-    sliderThumbBorder: '2px', // Slider thumb border thickness
-    sliderAnimDuration: 150, // Slider smooth animation duration (in milliseconds)
+    sliderTrackColor: 'rgba(255, 255, 255, 0.2)',
+    sliderHeight: '4px',
+    sliderThumbSize: '15px',
+    sliderThumbBorder: '2px',
+    sliderAnimDuration: 150,
 
     // Preset and -/+ buttons
-    btnBg: 'rgba(255, 255, 255, 0.10)', // Button background
-    btnHoverBg: 'rgba(255, 255, 255, 0.15)', // Button background on hover
-    btnTextColor: '#cccccc', // Inactive button text color
-    btnActiveTextColor: '#ffffff', // Active button text color
-    btnRadius: '30px', // Button corner radius
-    plusMinusBtnWidth: '30px', // Width of - and + buttons
+    btnBg: 'rgba(255, 255, 255, 0.10)',
+    btnHoverBg: 'rgba(255, 255, 255, 0.15)',
+    btnTextColor: '#cccccc',
+    btnActiveTextColor: '#ffffff',
+    btnRadius: '30px',
+    plusMinusBtnWidth: '30px',
 
     // Borders and shadows
-    boxShadow: '0 4px 24px rgba(0,0,0,0.0)', // Menu shadow
-    borderStyle: '1px solid rgba(255,255,255,0.00)', // Menu border
+    boxShadow: '0 4px 24px rgba(0,0,0,0.0)',
+    borderStyle: '1px solid rgba(255,255,255,0.00)',
 
     // Center screen indicator
-    indicatorBg: 'rgba(0,0,0,0.6)', // Indicator background
-    indicatorColor: '#ffffff', // Indicator text color
-    indicatorRadius: '20px', // Indicator corner radius
+    indicatorBg: 'rgba(0,0,0,0.6)',
+    indicatorColor: '#ffffff',
+    indicatorRadius: '20px',
 
     // Optional
     hideNativeSpeed: true,
@@ -81,13 +81,20 @@ const CONFIG = {
     let isHolding = false;
     let manualChangeActive = false;
     let sliderAnimationId = null;
+    // FIX: dedicated spacebar hold state, separate from YouTube's native hold
+    let spaceHolding = false;
+    let spaceHoldTimer = null;
+
+    // Inject Material Symbols font for fast_forward icon
+    const fontLink = document.createElement('link');
+    fontLink.rel = 'stylesheet';
+    fontLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=fast_forward';
+    document.head.appendChild(fontLink);
 
     const style = document.createElement('style');
     style.textContent = `
-        /* Hide native UI elements */
         .ytp-speedmaster-overlay, .ytp-bezel-text-wrapper { display: none !important; }
 
-        /* Class to hide cursor */
         .hide-cursor, .hide-cursor * { cursor: none !important; }
 
         .speed-btn-wrapper {
@@ -133,7 +140,6 @@ const CONFIG = {
             bottom: calc(100% + 15px);
             right: 50%;
             transform: translateX(50%) translateY(12px);
-
             width: ${CONFIG.menuWidth};
             background: ${CONFIG.menuBg};
             backdrop-filter: blur(${CONFIG.blurAmount});
@@ -146,7 +152,6 @@ const CONFIG = {
             box-shadow: ${CONFIG.boxShadow};
             border: ${CONFIG.borderStyle};
             opacity: 0;
-
             transition: opacity ${CONFIG.menuSpeed} ${CONFIG.menuTransitionType},
                         transform ${CONFIG.menuSpeed} ${CONFIG.menuTransitionType};
         }
@@ -264,11 +269,28 @@ const CONFIG = {
             pointer-events: none;
             display: none;
             backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        #speed-indicator .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-size: 22px;
+            font-weight: 400;
+            line-height: 1;
+            vertical-align: middle;
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: none;
+        }
+
+        #speed-indicator.hold-mode .material-symbols-outlined {
+            display: inline-block;
         }
     `;
     document.head.appendChild(style);
 
-    // Вспомогательная функция для форматирования нулей
     function formatSpeed(val) {
         let num = parseFloat(val);
         return CONFIG.showTrailingZeros ? num.toFixed(2) + 'x' : parseFloat(num.toFixed(2)) + 'x';
@@ -286,23 +308,42 @@ const CONFIG = {
         return svg;
     }
 
-    function showIndicator(text, duration) {
+    function showIndicator(text, duration, isHoldMode = false) {
         let ind = document.getElementById('speed-indicator');
         if (!ind) {
             ind = document.createElement('div');
             ind.id = 'speed-indicator';
+
+            // Text element first
+            const textSpan = document.createElement('span');
+            textSpan.id = 'speed-indicator-text';
+            ind.appendChild(textSpan);
+
+            // Icon element after text (hidden by default, shown in hold mode via CSS)
+            const icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined';
+            icon.textContent = 'fast_forward';
+            ind.appendChild(icon);
+
             document.querySelector('#movie_player')?.appendChild(ind);
         }
-        ind.textContent = text;
-        ind.style.display = 'block';
+
+        const textSpan = document.getElementById('speed-indicator-text');
+        if (textSpan) textSpan.textContent = text;
+
+        // Toggle hold-mode class to show/hide icon via CSS
+        ind.classList.toggle('hold-mode', isHoldMode);
+
+        ind.style.display = 'flex';
         clearTimeout(window.speedTimeout);
 
         if (duration !== -1) {
-            window.speedTimeout = setTimeout(() => { if(ind) ind.style.display = 'none'; }, duration * 1000);
+            window.speedTimeout = setTimeout(() => {
+                if (ind) ind.style.display = 'none';
+            }, duration * 1000);
         }
     }
 
-    // Анимация для ползунка
     function animateSliderTo(targetValue) {
         const slider = document.getElementById('s-input');
         if (!slider) return;
@@ -323,10 +364,8 @@ const CONFIG = {
         function step(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            const ease = progress * (2 - progress); // Плавное замедление (easeOutQuad)
-
+            const ease = progress * (2 - progress);
             slider.value = startValue + (endValue - startValue) * ease;
-
             if (progress < 1) {
                 sliderAnimationId = requestAnimationFrame(step);
             } else {
@@ -336,7 +375,6 @@ const CONFIG = {
         sliderAnimationId = requestAnimationFrame(step);
     }
 
-    // Обрати внимание: добавлен 3-й аргумент fromSlider
     function setRate(val, showVisual = false, fromSlider = false) {
         const video = document.querySelector('video');
         if (video) {
@@ -349,17 +387,17 @@ const CONFIG = {
             const speedText = formatSpeed(lastRate);
 
             if (showVisual) {
-                showIndicator(speedText, CONFIG.indicatorSeconds);
+                showIndicator(speedText, CONFIG.indicatorSeconds, false);
             }
 
             const trigger = document.getElementById('custom-speed-trigger');
-            if(trigger) trigger.textContent = speedText;
+            if (trigger) trigger.textContent = speedText;
 
             const sVal = document.getElementById('s-val');
-            if(sVal) sVal.textContent = speedText;
+            if (sVal) sVal.textContent = speedText;
 
             const sInput = document.getElementById('s-input');
-            if(sInput && !fromSlider) {
+            if (sInput && !fromSlider) {
                 animateSliderTo(lastRate);
             }
 
@@ -371,6 +409,68 @@ const CONFIG = {
         }
     }
 
+    // FIX: Spacebar hold — intercept keydown/keyup directly on document
+    // YouTube uses Space to play/pause on keydown. We intercept it to also
+    // trigger hold-speed on long press, without breaking the play/pause toggle.
+    function setupSpacebarHold() {
+        if (document._spaceHoldBound) return;
+        document._spaceHoldBound = true;
+
+        document.addEventListener('keydown', (e) => {
+            // Only act when focus is on the player/body, not in a text input
+            const tag = document.activeElement?.tagName?.toLowerCase();
+            if (tag === 'input' || tag === 'textarea' || document.activeElement?.isContentEditable) return;
+
+            if (e.code === 'Space' && !e.repeat && !spaceHolding) {
+                // Start a timer: if held longer than 300ms, activate hold speed
+                spaceHoldTimer = setTimeout(() => {
+                    const video = document.querySelector('video');
+                    if (!video) return;
+                    spaceHolding = true;
+                    isHolding = true;
+
+                    // Make sure video is playing while held
+                    if (video.paused) video.play();
+
+                    video.playbackRate = CONFIG.holdSpeed;
+
+                    const playerElement = document.querySelector('#movie_player');
+                    if (CONFIG.hideCursorOnHold && playerElement) playerElement.classList.add('hide-cursor');
+
+                    showIndicator(
+                        formatSpeed(CONFIG.holdSpeed),
+                        CONFIG.holdIndicatorSeconds,
+                        true  // show fast_forward icon
+                    );
+                }, 300);
+            }
+        }, true);
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                clearTimeout(spaceHoldTimer);
+
+                if (spaceHolding) {
+                    // Release hold — restore speed, keep video in whatever play state it was
+                    spaceHolding = false;
+                    isHolding = false;
+
+                    const video = document.querySelector('video');
+                    if (video) video.playbackRate = lastRate;
+
+                    const playerElement = document.querySelector('#movie_player');
+                    if (playerElement) playerElement.classList.remove('hide-cursor');
+
+                    const ind = document.getElementById('speed-indicator');
+                    if (ind) ind.style.display = 'none';
+                    clearTimeout(window.speedTimeout);
+                }
+                // If timer didn't fire yet (short tap), YouTube's own handler
+                // already handled play/pause — we do nothing extra.
+            }
+        }, true);
+    }
+
     function toggleMenu(forceClose = false) {
         const box = document.getElementById('speed-menu-box');
         const blocker = document.getElementById('speed-video-blocker');
@@ -378,11 +478,11 @@ const CONFIG = {
 
         if (forceClose || box.classList.contains('show')) {
             box.classList.remove('show');
-            if(blocker) blocker.style.display = 'none';
-            setTimeout(() => { if(!box.classList.contains('show')) box.style.display = 'none'; }, parseFloat(CONFIG.menuSpeed) * 1000);
+            if (blocker) blocker.style.display = 'none';
+            setTimeout(() => { if (!box.classList.contains('show')) box.style.display = 'none'; }, parseFloat(CONFIG.menuSpeed) * 1000);
         } else {
             box.style.display = 'flex';
-            if(blocker) blocker.style.display = 'block';
+            if (blocker) blocker.style.display = 'block';
             setTimeout(() => box.classList.add('show'), 10);
         }
     }
@@ -466,7 +566,6 @@ const CONFIG = {
         header.appendChild(headerRight);
         menuBox.appendChild(header);
 
-        // --- Блок с ползунком и кнопками - / + ---
         const sliderRow = document.createElement('div');
         sliderRow.className = 's-slider-row';
 
@@ -483,7 +582,6 @@ const CONFIG = {
         slider.max = CONFIG.maxSpeed;
         slider.step = CONFIG.sliderStep;
         slider.value = lastRate;
-        // Передаем true в качестве fromSlider, чтобы ползунок не дергался при ручном перетаскивании
         slider.oninput = (e) => setRate(e.target.value, false, true);
 
         const plusBtn = document.createElement('button');
@@ -495,7 +593,6 @@ const CONFIG = {
         sliderRow.appendChild(slider);
         sliderRow.appendChild(plusBtn);
         menuBox.appendChild(sliderRow);
-        // -----------------------------------------
 
         const grid = document.createElement('div');
         grid.className = 's-grid';
@@ -504,12 +601,7 @@ const CONFIG = {
             btn.className = 's-btn';
             btn.dataset.v = v;
             btn.textContent = formatSpeed(v);
-
-            // Если скорость совпадает с текущей, делаем кнопку активной
-            if (parseFloat(v) === lastRate) {
-                btn.classList.add('active');
-            }
-
+            if (parseFloat(v) === lastRate) btn.classList.add('active');
             btn.onclick = () => setRate(v);
             grid.appendChild(btn);
         });
@@ -534,6 +626,9 @@ const CONFIG = {
         }
     }, { capture: true, passive: false });
 
+    // Setup spacebar hold listener once
+    setupSpacebarHold();
+
     setInterval(() => {
         init();
         const box = document.getElementById('speed-menu-box');
@@ -543,31 +638,26 @@ const CONFIG = {
         if (box && box.classList.contains('show') && player) player.wakeUpControls();
 
         if (video) {
-            if (!video.dataset.holdBound) {
-                video.dataset.holdBound = "true";
-                video.addEventListener('ratechange', () => {
-                    const playerElement = document.querySelector('#movie_player');
-
-                    if (video.playbackRate === 2.0 && !isHolding && !manualChangeActive) {
-                        isHolding = true;
-                        video.playbackRate = CONFIG.holdSpeed;
-                        if (CONFIG.hideCursorOnHold && playerElement) playerElement.classList.add('hide-cursor');
-                        showIndicator(formatSpeed(CONFIG.holdSpeed), CONFIG.holdIndicatorSeconds);
-                    }
-                    else if (video.playbackRate === 1.0 && isHolding) {
-                        isHolding = false;
-                        video.playbackRate = lastRate;
-                        if (playerElement) playerElement.classList.remove('hide-cursor');
-                        const ind = document.getElementById('speed-indicator');
-                        if(ind) ind.style.display = 'none';
-                        clearTimeout(window.speedTimeout);
-                    }
-                });
+            // Keep playbackRate in sync if something external changed it (and we're not holding)
+            if (!isHolding && !manualChangeActive && !spaceHolding) {
+                const currentRate = Math.round(video.playbackRate * 100) / 100;
+                if (currentRate !== lastRate && currentRate !== CONFIG.holdSpeed) {
+                    // External change (e.g. YouTube's own speed menu) — sync our state
+                    lastRate = currentRate;
+                    const trigger = document.getElementById('custom-speed-trigger');
+                    if (trigger) trigger.textContent = formatSpeed(lastRate);
+                    const sVal = document.getElementById('s-val');
+                    if (sVal) sVal.textContent = formatSpeed(lastRate);
+                    animateSliderTo(lastRate);
+                    document.querySelectorAll('.s-btn').forEach(b => {
+                        b.classList.toggle('active', parseFloat(b.dataset.v) === lastRate);
+                    });
+                }
             }
         }
 
         const playerElement = document.querySelector('#movie_player');
-        if (playerElement && !isHolding && playerElement.classList.contains('hide-cursor')) {
+        if (playerElement && !isHolding && !spaceHolding && playerElement.classList.contains('hide-cursor')) {
             playerElement.classList.remove('hide-cursor');
         }
 
