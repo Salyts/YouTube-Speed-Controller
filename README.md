@@ -31,7 +31,7 @@ Choose one based on your browser:
 You can easily modify the script behavior by editing the `CONFIG` block at the top of the code:
 
 ```javascript
-        maxSpeed: 4.0, // Maximum speed on the slider
+    maxSpeed: 4.0, // Maximum speed on the slider
     minSpeed: 0.10, // Minimum speed
     scrollStep: 0.10, // Step when using mouse wheel (Shift + mouse scroll)
     sliderStep: 0.10, // Step for the UI slider
